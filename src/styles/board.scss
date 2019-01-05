@@ -1,4 +1,6 @@
 .board{
+  width: 560px;
+  height: 560px;
   &__row:after{
     margin: auto;
     clear: both;
@@ -6,11 +8,10 @@
     display: table;
   }
   &__square {
-    //background: #fff;
     border: 1px solid #999;
     float: left;
-    width: 75px;
-    height: 75px;
+    width: 70px;
+    height: 70px;
 
     font-size: 24px;
     font-weight: bold;
@@ -28,11 +29,17 @@
     &--black{
       background-color: #4a5758;
     }
-    &--figure-white{
+    &--figure-w{
       color: #dcdcdc;
     }
-    &--figure-black{
+    &--figure-b{
       color: black;
+    }
+    &--selected{
+      border: #27ae60 6px solid;
+    }
+    &--valid-move{
+      border: greenyellow 4px solid;
     }
   }
 
