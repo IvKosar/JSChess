@@ -29,12 +29,6 @@
     &--black{
       background-color: #4a5758;
     }
-    &--figure-w{
-      color: #dcdcdc;
-    }
-    &--figure-b{
-      color: black;
-    }
     &--selected{
       border: #27ae60 6px solid;
     }
@@ -43,4 +37,13 @@
     }
   }
 
+}
+
+.figure{
+  &-w{
+    color: #dcdcdc;
+  }
+  &-b{
+    color: black;
+  }
 }
