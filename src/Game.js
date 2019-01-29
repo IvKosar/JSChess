@@ -5,31 +5,16 @@ import {
   getBlackFigures,
   getWhiteFigures,
 } from "./chess_backend";
-import placeFigures from "./figures_placement";
-import Board from "./Board";
 
-export default class Game extends React.Component {
+import Board from "./Board";
+import BaseGame from "./BaseGame";
+
+export default class Game extends BaseGame {
   constructor(props) {
     super(props);
-    this.constants = {
-      WIDTH: 8,
-      HEIGHT: 8,
-      COLOR_MAP: {
-        0: "white",
-        1: "black"
-      },
-      PLAYER_MAP: {
-        0: getWhiteFigures,
-        1: getBlackFigures
-      }
-    };
-    this.state = {
-      figures: placeFigures(),
-      current_player: 0,
-      squares_modifications: {
+    this.state.squares_modifications = {
         figure_selected_position: null,
         valid_moves: []
-      }
     };
   }
 
@@ -77,13 +62,6 @@ export default class Game extends React.Component {
         valid_moves: []
       }
     };
-  }
-
-  move(field, [r0, c0], [r1, c1]) {
-    field[r0][c0].has_moved = true;
-    field[r1][c1] = field[r0][c0];
-    field[r0][c0] = null;
-    return field;
   }
 
   handleSelect([row, col]) {
