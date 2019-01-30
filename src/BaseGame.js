@@ -1,5 +1,5 @@
 import React from "react";
-import {calculateDraw, calculateWinner, getBlackFigures, getWhiteFigures} from "./chess_backend";
+import {calculateDraw, calculateWinner, getBlackPieces, getWhitePieces} from "./chess_backend";
 import placeFigures from "./figures_placement";
 import Board from "./Board";
 
@@ -14,13 +14,23 @@ export default class BaseGame extends React.Component {
                 1: "b"
             },
             PLAYER_MAP: {
-                0: getWhiteFigures,
-                1: getBlackFigures
-            }
+                0: getWhitePieces,
+                1: getBlackPieces
+            },
         };
         this.state = {
-            figures: placeFigures(),
+            players:{
+                0: "white",
+                1: "black",
+            },
+            history:[{
+                figures: placeFigures(),
+            },],
             current_player: 0,
+            game_result:{
+                winner: null,
+                draw: null,
+            }
         };
     }
 

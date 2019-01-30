@@ -11,3 +11,13 @@ ol, ul {
 #root{
   display: flex;
 }
+
+.control-button{
+  margin: 20px;
+  background-color: transparent;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: sans-serif;
+  color: #34495e;
+  cursor: pointer;
+}

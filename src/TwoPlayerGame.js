@@ -2,8 +2,8 @@ import React from "react";
 import {
   calculateDraw,
   calculateWinner,
-  getBlackFigures,
-  getWhiteFigures,
+  getBlackPieces,
+  getWhitePieces,
 } from "./chess_backend";
 
 import Board from "./Board";
@@ -36,26 +36,26 @@ export default class TwoPlayerGame extends BaseGame {
   }
 
   handleMove([row, col]) {
-    let field = this.state.figures.slice();
+    let board = this.state.figures.slice();
     let next_player = this.state.current_player;
     let figure_selected_position = this.state.squares_modifications
       .figure_selected_position;
     if (figure_selected_position !== null) {
       let sf_row = figure_selected_position[0],
         sf_col = figure_selected_position[1];
-      let selected_figure = field[sf_row][sf_col];
+      let selected_figure = board[sf_row][sf_col];
       let valid_moves = selected_figure.valid_moves(
         this.state.figures,
         [sf_row,
         sf_col]
       );
       if (valid_moves.find(([r, c]) => r === row && c === col) != null) {
-        field = this.move(field, [sf_row, sf_col], [row, col]);
+        board = this.move(board, [sf_row, sf_col], [row, col]);
         next_player = (this.state.current_player + 1) % 2;
       }
     }
     return {
-      figures: field,
+      figures: board,
       current_player: next_player,
       squares_modifications: {
         figure_selected_position: null,
