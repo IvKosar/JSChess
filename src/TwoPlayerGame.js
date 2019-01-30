@@ -9,7 +9,7 @@ import {
 import Board from "./Board";
 import BaseGame from "./BaseGame";
 
-export default class Game extends BaseGame {
+export default class TwoPlayerGame extends BaseGame {
   constructor(props) {
     super(props);
     this.state.squares_modifications = {

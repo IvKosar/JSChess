@@ -2,14 +2,27 @@ import {rockValidMoves, knightValidMoves, queenValidMoves, kingValidMoves} from 
 import {bishopValidMoves} from "./moves/bishop_moves";
 import pawnValidMoves from "./moves/pawn_moves";
 
-const A = 0;
-const B = 1;
-const C = 2;
-const D = 3;
-const E = 4;
-const F = 6;
-const G = 6;
-const H = 7;
+export const boardColumnNames = {
+    A: 0,
+    B: 1,
+    C: 2,
+    D: 3,
+    E: 4,
+    F: 5,
+    G: 6,
+    H: 7,
+};
+
+export const boardRowNames = {
+    1: 7,
+    2: 6,
+    3: 5,
+    4: 4,
+    5: 3,
+    6: 2,
+    7: 1,
+    8: 0,
+};
 
 export default function placeFigures() {
     // WHITE

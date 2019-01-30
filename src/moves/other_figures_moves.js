@@ -1,5 +1,6 @@
 import {getValidVerticalMoves, getValidHorizontalMoves, generateCombinations} from "./basic_moves";
 import {bishopValidMoves} from "./bishop_moves";
+import {boardColumnNames, boardRowNames} from "../figures_placement";
 
 function rockValidMoves(board, [row, col]) {
     let moves = getValidVerticalMoves(board, [row, col]);
@@ -49,9 +50,39 @@ function kingValidMoves(board, [row, col]) {
     return moves.filter(item => item !== undefined);
 }
 
+function twoZerosMove(player) {
+    function kingMove(player){
+        let row = player === "white" ? 1 : 8;
+        return [[boardRowNames[row], boardColumnNames.E], [boardRowNames[row], boardColumnNames.G]];
+    }
+
+    function rockMove(player) {
+        let row = player === "white" ? 1 : 8;
+        return [[boardRowNames[row], boardColumnNames.H], [boardRowNames[row], boardColumnNames.F]]
+    }
+
+    return [kingMove(player), rockMove(player)]
+}
+
+function threeZerosMove(player) {
+    function kingMove(player){
+        let row = player === "white" ? 1 : 8;
+        return [[boardRowNames[row], boardColumnNames.E], [boardRowNames[row], boardColumnNames.C]];
+    }
+
+    function rockMove(player) {
+        let row = player === "white" ? 1 : 8;
+        return [[boardRowNames[row], boardColumnNames.A], [boardRowNames[row], boardColumnNames.D]]
+    }
+
+    return [kingMove(player), rockMove(player)]
+}
+
 export {
     rockValidMoves,
     knightValidMoves,
     queenValidMoves,
     kingValidMoves,
+    twoZerosMove,
+    threeZerosMove,
 }
