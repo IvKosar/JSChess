@@ -10,8 +10,8 @@ export default class BaseGame extends React.Component {
             WIDTH: 8,
             HEIGHT: 8,
             COLOR_MAP: {
-                0: "white",
-                1: "black"
+                0: "w",
+                1: "b"
             },
             PLAYER_MAP: {
                 0: getWhiteFigures,
@@ -25,8 +25,10 @@ export default class BaseGame extends React.Component {
     }
 
     move(field, [r0, c0], [r1, c1]) {
-        field[r0][c0].has_moved = true;
-        field[r1][c1] = field[r0][c0];
+        let piece = field[r0][c0];
+        piece.has_moved = true;
+        piece.position = [r1, c1];
+        field[r1][c1] = piece;
         field[r0][c0] = null;
         return field;
     }
@@ -44,7 +46,7 @@ export default class BaseGame extends React.Component {
             status_value = "";
             status_value_modifier = "";
         } else {
-            let player = !this.state.current_player ? "white" : "black";
+            let player = !this.state.current_player ? "w" : "b";
             status_key = "Current player:";
             status_value = player;
             status_value_modifier = " game-info__value--" + player;

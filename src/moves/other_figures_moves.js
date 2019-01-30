@@ -52,12 +52,12 @@ function kingValidMoves(board, [row, col]) {
 
 function twoZerosMove(player) {
     function kingMove(player){
-        let row = player === "white" ? 1 : 8;
+        let row = player === "w" ? 1 : 8;
         return [[boardRowNames[row], boardColumnNames.E], [boardRowNames[row], boardColumnNames.G]];
     }
 
     function rockMove(player) {
-        let row = player === "white" ? 1 : 8;
+        let row = player === "w" ? 1 : 8;
         return [[boardRowNames[row], boardColumnNames.H], [boardRowNames[row], boardColumnNames.F]]
     }
 
@@ -66,12 +66,12 @@ function twoZerosMove(player) {
 
 function threeZerosMove(player) {
     function kingMove(player){
-        let row = player === "white" ? 1 : 8;
+        let row = player === "w" ? 1 : 8;
         return [[boardRowNames[row], boardColumnNames.E], [boardRowNames[row], boardColumnNames.C]];
     }
 
     function rockMove(player) {
-        let row = player === "white" ? 1 : 8;
+        let row = player === "w" ? 1 : 8;
         return [[boardRowNames[row], boardColumnNames.A], [boardRowNames[row], boardColumnNames.D]]
     }
 

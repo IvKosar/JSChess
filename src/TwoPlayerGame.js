@@ -103,7 +103,7 @@ export default class TwoPlayerGame extends BaseGame {
       status_value = "";
       status_value_modifier = "";
     } else {
-      let player = !this.state.current_player ? "white" : "black";
+      let player = !this.state.current_player ? "w" : "b";
       status_key = "Current player:";
       status_value = player;
       status_value_modifier = " game-info__value--" + player;
