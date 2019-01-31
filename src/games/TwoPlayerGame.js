@@ -1,31 +1,28 @@
 import React from "react";
-import {
-  calculateDraw,
-  calculateWinner,
-  getBlackPieces,
-  getWhitePieces,
-} from "./chess_backend";
+import { calculateDraw, calculateWinner } from "../chess_backend";
 
-import Board from "./Board";
+import Board from "../Board";
 import BaseGame from "./BaseGame";
+import deepcopy2DArray from "../helper_functions";
 
 export default class TwoPlayerGame extends BaseGame {
   constructor(props) {
     super(props);
     this.state.squares_modifications = {
-        figure_selected_position: null,
-        valid_moves: []
+      figure_selected_position: null,
+      valid_moves: []
     };
   }
 
   handleClick([row, col]) {
     let state = this.state;
+    let board = deepcopy2DArray(state.history.figures);
     let player_figures = this.constants.PLAYER_MAP[this.state.current_player](
       this.state.figures
     );
     if (
-      this.state.figures[row][col] &&
-      this.state.figures[row][col].color === player_figures[0].color
+      board[row][col] &&
+      board[row][col].color === player_figures[0].color
     ) {
       // player selects figure
       state = this.handleSelect([row, col]);
@@ -44,11 +41,10 @@ export default class TwoPlayerGame extends BaseGame {
       let sf_row = figure_selected_position[0],
         sf_col = figure_selected_position[1];
       let selected_figure = board[sf_row][sf_col];
-      let valid_moves = selected_figure.valid_moves(
-        this.state.figures,
-        [sf_row,
-        sf_col]
-      );
+      let valid_moves = selected_figure.valid_moves(this.state.figures, [
+        sf_row,
+        sf_col
+      ]);
       if (valid_moves.find(([r, c]) => r === row && c === col) != null) {
         board = this.move(board, [sf_row, sf_col], [row, col]);
         next_player = (this.state.current_player + 1) % 2;
@@ -91,9 +87,29 @@ export default class TwoPlayerGame extends BaseGame {
   }
 
   render() {
+    const history = this.state.history;
+    let current_board = history[this.state.current_move].figures;
+
     let status_key, status_value, status_value_modifier;
     let winner = calculateWinner(this.state.figures);
     let draw = calculateDraw(this.state.figures);
+
+    const moves = history.map((step, move) => {
+      const desc = move
+        ? "Go to move #" + move
+        : "Go to game start";
+      return (
+        <li key={move}>
+          <button
+            className={"control-button"}
+            onClick={() => this.jumpTo(move)}
+          >
+            {desc}
+          </button>
+        </li>
+      );
+    });
+
     if (winner) {
       status_key = "Winner:";
       status_value = winner;
@@ -112,7 +128,7 @@ export default class TwoPlayerGame extends BaseGame {
       <main className="game">
         <div className="board">
           <Board
-            figures={this.state.figures}
+            figures={current_board}
             current_player={this.state.current_player}
             HEIGHT={this.constants.HEIGHT}
             WIDTH={this.constants.WIDTH}
@@ -129,7 +145,7 @@ export default class TwoPlayerGame extends BaseGame {
           <dd className={"game-info__value" + status_value_modifier}>
             {status_value}
           </dd>
-          {/*<ol>{moves}</ol>*/}
+          <ol>{moves}</ol>
         </dl>
       </main>
     );

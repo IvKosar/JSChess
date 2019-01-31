@@ -18,6 +18,12 @@ ol, ul {
   border-radius: 10px;
   font-size: 14px;
   font-family: sans-serif;
-  color: #34495e;
   cursor: pointer;
+  color: #3498db;
+  &--w{
+    background-color: white;
+  }
+  &--b{
+    background-color: #34495e;
+  }
 }
