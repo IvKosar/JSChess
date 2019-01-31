@@ -4,17 +4,17 @@ import FIGURES, {boardColumnNames, boardRowNames} from "./figures_placement";
 import {calculateDraw, calculateWinner} from "./chess_backend";
 import Board from "./Board";
 import React from "react";
+import parsePGNFile from "./pgn_parser";
 
 export default class PartyGame extends BaseGame {
     constructor(props) {
         super(props);
         this.partyDesc = parsePGNFile(props.pgnFilename);
-        this.state.current_move = 0;
         this.state.players[0] = this.partyDesc.players[0];
         this.state.players[1] = this.partyDesc.players[1];
     }
 
-    parseMove(move, current_player) {
+    parseMove(board, move, current_player) {
         if (move === "0-0") {
             return {
                 moves: twoZerosMove(this.constants.COLOR_MAP[current_player])
@@ -66,22 +66,24 @@ export default class PartyGame extends BaseGame {
                     transform_piece: transform_piece,
                 }
             };
-            return this.parseUsualMove(move_details, current_player);
+            return this.parseUsualMove(board, move_details, current_player);
         }
     }
 
-    parseUsualMove(move, current_player) {
+    parseUsualMove(board, move, current_player) {
         let result = {};
 
         let dest_row = boardRowNames[move.destination[1]];
         let dest_col = boardColumnNames[move.destination[0].toUpperCase()];
 
-        let board = this.state.history[this.state.history.length - 1].figures.slice();
         let player_pieces = this.constants.PLAYER_MAP[current_player](board);
         let valid_player_pieces = player_pieces
-            .filter(p => p.title === move.piece.toUpperCase())
-            .filter(p => p.valid_moves(board, p.position).find(([r, c]) => r === dest_row && c === dest_col) != null);
-
+            .filter(p => p.title === move.piece.toUpperCase());
+            //.filter(p => p.valid_moves(board, p.position).find(([r, c]) => r === dest_row && c === dest_col) != null);
+        console.log("puec");
+        console.log(valid_player_pieces);
+        console.log(board);
+        valid_player_pieces = valid_player_pieces.filter(p => p.valid_moves(board, p.position).find(([r, c]) => r === dest_row && c === dest_col) != null);
         if (valid_player_pieces.length > 1) {
             result.moves = [this.parseMultipleSources(move, valid_player_pieces)]
         } else {
@@ -116,27 +118,32 @@ export default class PartyGame extends BaseGame {
         }
     }
 
+    jumpTo(move_number) {
+        this.setState({
+            history: this.state.history.slice(0, move_number + 1),
+            current_move: move_number,
+            current_player: move_number % 2
+        });
+    }
+
     handleClick() {
-        let board = this.state.history[this.state.history.length - 1].figures.slice();
-        let result = this.parseMove(this.partyDesc.moves[this.state.current_move].move,
+        const history = this.state.history.slice();
+        let board = deepcopy2DArray(history[history.length - 1].figures);
+        let result = this.parseMove(board, this.partyDesc.moves[this.state.current_move].move,
             this.state.current_player);
 
         if ("winner" in result) {
             this.setState({
-                history: this.state.history,
                 current_player: (this.state.current_player + 1) % 2,
                 game_result: {
                     winner: result.winner,
-                    draw: null,
                 }
             });
             return;
         } else if ("draw" in result) {
             this.setState({
-                history: this.state.history,
                 current_player: (this.state.current_player + 1) % 2,
                 game_result: {
-                    winner: null,
                     draw: result.draw,
                 }
             });
@@ -146,24 +153,37 @@ export default class PartyGame extends BaseGame {
         for (let [src, dst] of result.moves) {
             board = this.move(board, src, dst);
         }
-        this.state.current_move++;
-        this.setState({
-            history: this.state.history.concat([{
+        history.push(
+            {
                 figures: board
-            }]),
+            });
+        this.setState({
+            history: history,
             current_player: (this.state.current_player + 1) % 2,
-            game_result: {
-                winner: null,
-                draw: null,
-            }
+            current_move: this.state.current_move + 1,
         });
     }
 
     render() {
-        let current_board = this.state.history[this.state.history.length - 1].figures;
+        console.log("Move");
+        console.log(this.state.current_move);
+        const history = this.state.history;
+        let current_board = history[this.state.current_move].figures;
+
         let status_key, status_value, status_value_modifier;
         let winner = this.state.game_result.winner;
         let draw = this.state.game_result.draw;
+        const moves = history.map((step, move) => {
+            const desc = move ?
+                'Go to move ' + this.partyDesc.moves[move - 1].move :
+                'Go to game start';
+            return (
+                <li key={move}>
+                    <button className={"control-button"} onClick={() => this.jumpTo(move)}>{desc}</button>
+                </li>
+            );
+        });
+
         if (winner) {
             status_key = "Winner:";
             status_value = this.state.players[winner];
@@ -178,6 +198,7 @@ export default class PartyGame extends BaseGame {
             status_value = this.state.players[this.state.current_player];
             status_value_modifier = " game-info__value--" + player;
         }
+
         return (
             <main className="game">
                 <div className="board">
@@ -196,9 +217,8 @@ export default class PartyGame extends BaseGame {
                             {status_value}
                         </span>
                     </p>
-
+                    <ol>{moves}</ol>
                     <button className={"control-button"} onClick={() => this.handleClick()}><span>Next Move</span><span>→</span></button>
-                    {/*<ol>{moves}</ol>*/}
                 </div>
 
             </main>
@@ -206,28 +226,6 @@ export default class PartyGame extends BaseGame {
     }
 }
 
-function parsePGNFile(filename) {
-    return {
-        players: {
-            0: "Kasparov",
-            1: "Karlsen",
-        },
-        moves: [
-            { move: 'e4', move_number: 1},
-            { move: 'e5'},
-            { move: 'Nf3', move_number: 2},
-            { move: 'Nc6'},
-            { move: 'Bc4', move_number: 3},
-            { move: 'Bc5', ravs: [{ moves: [{move_number: 3, move: "...Nf6", comment: "is the two knights"}]}]},
-            { move: 'b4', move_number: 4},
-            { move: 'Bxb4'},
-            { move: 'c3', move_number: 5},
-            { move: 'Ba5'},
-            { move: 'd4', move_number: 6},
-            { move: 'exd4'},
-            { move: '0-0', move_number: 7},
-            { move: 'Nge7', nags: ["$1"]},
-            {move: "0-1"}
-        ]
-    }
+function deepcopy2DArray(array) {
+    return array.slice().map(innerArray => innerArray.slice())
 }

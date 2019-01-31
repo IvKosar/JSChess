@@ -27,6 +27,7 @@ export default class BaseGame extends React.Component {
                 figures: placeFigures(),
             },],
             current_player: 0,
+            current_move: 0,
             game_result:{
                 winner: null,
                 draw: null,
@@ -34,13 +35,13 @@ export default class BaseGame extends React.Component {
         };
     }
 
-    move(field, [r0, c0], [r1, c1]) {
-        let piece = field[r0][c0];
+    move(board, [r0, c0], [r1, c1]) {
+        let piece = Object.assign({}, board[r0][c0]);
         piece.has_moved = true;
         piece.position = [r1, c1];
-        field[r1][c1] = piece;
-        field[r0][c0] = null;
-        return field;
+        board[r1][c1] = piece;
+        board[r0][c0] = null;
+        return board;
     }
 
     render() {
